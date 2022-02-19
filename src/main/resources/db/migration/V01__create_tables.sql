@@ -1,7 +1,7 @@
 
 CREATE TABLE tb_boleto (
     boleto_id int,
-    valor varchar(255),
+    valor DECIMAL,
     PRIMARY KEY (boleto_id)
 );
 

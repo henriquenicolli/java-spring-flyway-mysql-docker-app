@@ -5,10 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.math.BigDecimal;
+import java.util.Comparator;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,12 +15,19 @@ import javax.persistence.Table;
 @Setter
 @Entity
 @Table(name = "tb_boleto")
-public class BoletoEntity {
+public class BoletoEntity implements Comparable<BoletoEntity> {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(name = "boleto_id")
     private Long boletoId;
 
-    private String valor;
+    @Column(name = "valor")
+    private BigDecimal valor;
 
+
+    @Override
+    public int compareTo(BoletoEntity o) {
+        return valor.compareTo(o.getValor());
+    }
 }

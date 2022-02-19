@@ -12,8 +12,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ComponentScan(basePackages = { "com.example.demo" })
 @SpringBootApplication
@@ -26,38 +29,40 @@ public class DemoApplication {
 	}
 
 	@Bean
-	public CommandLineRunner demo(LoteRepository repository) {
+	public CommandLineRunner demo(LoteRepository repository, BoletoRepository boletoRepository) {
 		return (args) -> {
-			BoletoEntity boletoEntity = new BoletoEntity();
-			boletoEntity.setBoletoId(1L);
+			/*Random random = new Random();
 
-			LoteEntity lote1 = new LoteEntity();
+			for (int i = 0; i <= 1000000 ; i++) {
+				BoletoEntity bol = new BoletoEntity();
+				bol.setValor(new BigDecimal(random.nextInt(1000)));
+				boletoRepository.save(bol);
+				System.out.println("count : "+ i + " last: 1000000");
+			}*/
+
+
+			/*LoteEntity lote1 = new LoteEntity();
 			lote1.setLoteId(1L);
 			lote1.setValor("200");
 			lote1.setBoletos(Collections.singleton(boletoEntity));
+			repository.save(lote1);*/
 
+			Instant start = Instant.now();
 
+			List<BoletoEntity> allBoletos = (List<BoletoEntity>) boletoRepository.findAll();
 
-			repository.save(lote1);
+			List<BoletoEntity> boletosSelecionados = allBoletos.stream()
+					.sorted(Comparator.comparing(BoletoEntity::getValor))
+					.sorted(Collections.reverseOrder())
+					.collect(Collectors.toList());
 
+			boletosSelecionados.forEach(boletoEntity -> System.out.println("valor: "+ boletoEntity.getValor()));
 
+			//ordenado do valor
 
-			log.info("LoteEntity found with findAll():");
-			log.info("-------------------------------");
-			for (LoteEntity lote : repository.findAll()) {
-				log.info(lote.toString());
-			}
-			log.info("");
-
-
-			Optional<LoteEntity> boleto = repository.findById(1L);
-			log.info("LoteEntity found with findById(1L):");
-			log.info("--------------------------------");
-			log.info(boleto.toString());
-			log.info("");
-
-
-			log.info("");
+			Instant end = Instant.now();
+			System.out.println("size : " + allBoletos.size());
+			System.out.println(Duration.between(start, end));
 		};
 	}
 
